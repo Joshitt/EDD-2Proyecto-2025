@@ -57,8 +57,8 @@ public class VentanaPrincipal extends javax.swing.JFrame
         marcoArb = new javax.swing.JPanel();
         iconDependencia = new javax.swing.JLabel();
         iconHospital = new javax.swing.JLabel();
+        iconPacient = new javax.swing.JLabel();
         iconEspecialidad = new javax.swing.JLabel();
-        iconPaciente = new javax.swing.JLabel();
         iconFlechaArb = new javax.swing.JLabel();
         marcoBarraRuta = new javax.swing.JPanel();
         txtRuta = new javax.swing.JTextField();
@@ -108,24 +108,31 @@ public class VentanaPrincipal extends javax.swing.JFrame
             }
         });
 
-        iconEspecialidad.setBackground(null);
-        iconEspecialidad.setIcon(new javax.swing.ImageIcon(getClass().getResource("/vista/imagenes/paciente_arb.png"))); // NOI18N
-        iconEspecialidad.setToolTipText("Paciente");
-        iconEspecialidad.setBorder(new EmptyBorder(3, 3, 3, 3));
-        iconEspecialidad.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        iconEspecialidad.setOpaque(true);
-
-        iconPaciente.setBackground(null);
-        iconPaciente.setIcon(new javax.swing.ImageIcon(getClass().getResource("/vista/imagenes/est_arb.png"))); // NOI18N
-        iconPaciente.setToolTipText("Especialidad");
-        iconPaciente.setBorder(new EmptyBorder(3, 3, 3, 3));
-        iconPaciente.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        iconPaciente.setOpaque(true);
-        iconPaciente.addMouseListener(new java.awt.event.MouseAdapter()
+        iconPacient.setBackground(null);
+        iconPacient.setIcon(new javax.swing.ImageIcon(getClass().getResource("/vista/imagenes/paciente_arb.png"))); // NOI18N
+        iconPacient.setToolTipText("Paciente");
+        iconPacient.setBorder(new EmptyBorder(3, 3, 3, 3));
+        iconPacient.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        iconPacient.setOpaque(true);
+        iconPacient.addMouseListener(new java.awt.event.MouseAdapter()
         {
             public void mouseClicked(java.awt.event.MouseEvent evt)
             {
-                iconPacienteMouseClicked(evt);
+                iconPacientMouseClicked(evt);
+            }
+        });
+
+        iconEspecialidad.setBackground(null);
+        iconEspecialidad.setIcon(new javax.swing.ImageIcon(getClass().getResource("/vista/imagenes/est_arb.png"))); // NOI18N
+        iconEspecialidad.setToolTipText("Especialidad");
+        iconEspecialidad.setBorder(new EmptyBorder(3, 3, 3, 3));
+        iconEspecialidad.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        iconEspecialidad.setOpaque(true);
+        iconEspecialidad.addMouseListener(new java.awt.event.MouseAdapter()
+        {
+            public void mouseClicked(java.awt.event.MouseEvent evt)
+            {
+                iconEspecialidadMouseClicked(evt);
             }
         });
 
@@ -194,9 +201,9 @@ public class VentanaPrincipal extends javax.swing.JFrame
                 .addGap(18, 18, 18)
                 .addComponent(iconHospital)
                 .addGap(18, 18, 18)
-                .addComponent(iconPaciente)
-                .addGap(18, 18, 18)
                 .addComponent(iconEspecialidad)
+                .addGap(18, 18, 18)
+                .addComponent(iconPacient)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(iconFlechaArb, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -209,8 +216,8 @@ public class VentanaPrincipal extends javax.swing.JFrame
                 .addContainerGap(18, Short.MAX_VALUE)
                 .addGroup(marcoArbLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addComponent(iconFlechaArb, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(iconPacient, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(iconEspecialidad, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(iconPaciente, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(iconHospital, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(iconDependencia, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(marcoBarraRuta, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -333,13 +340,21 @@ public class VentanaPrincipal extends javax.swing.JFrame
         h.setVisible(true);
     }//GEN-LAST:event_iconHospitalMouseClicked
 
-    private void iconPacienteMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_iconPacienteMouseClicked
-    {//GEN-HEADEREND:event_iconPacienteMouseClicked
+    private void iconEspecialidadMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_iconEspecialidadMouseClicked
+    {//GEN-HEADEREND:event_iconEspecialidadMouseClicked
         String ruta = txtRuta.getText();
         VentanaCrearEsp e = new VentanaCrearEsp(this, rootPaneCheckingEnabled, this, ruta);
         e.setLocationRelativeTo(this);
         e.setVisible(true);
-    }//GEN-LAST:event_iconPacienteMouseClicked
+    }//GEN-LAST:event_iconEspecialidadMouseClicked
+
+    private void iconPacientMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_iconPacientMouseClicked
+    {//GEN-HEADEREND:event_iconPacientMouseClicked
+        String ruta = txtRuta.getText();
+        VentanaCrearPac p = new VentanaCrearPac(this, rootPaneCheckingEnabled, this, ruta);
+        p.setLocationRelativeTo(this);
+        p.setVisible(true);
+    }//GEN-LAST:event_iconPacientMouseClicked
 
     private void manejarDbClick(int fila)
     {
@@ -457,7 +472,7 @@ public class VentanaPrincipal extends javax.swing.JFrame
     private javax.swing.JLabel iconEspecialidad;
     private javax.swing.JLabel iconFlechaArb;
     private javax.swing.JLabel iconHospital;
-    private javax.swing.JLabel iconPaciente;
+    private javax.swing.JLabel iconPacient;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JPanel marcoArb;
     private javax.swing.JPanel marcoBarraRuta;
