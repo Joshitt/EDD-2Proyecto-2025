@@ -8,9 +8,12 @@ import java.awt.Dimension;
 import java.awt.Image;
 import java.net.URL;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import javax.swing.ImageIcon;
+import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
@@ -70,6 +73,30 @@ public class Manipula
         {
             return false;
         }
+    }
+
+    public  static String construirRutaDesdeNodo(NodoM nodo)
+    {
+        StringBuilder ruta = new StringBuilder();
+        while (nodo != null)
+        {
+            Object obj = nodo.getObj();
+            if (obj instanceof Paciente)
+            {
+                ruta.insert(0, ((Paciente) obj).getNombre() + "/");
+            } else if (obj instanceof Especialidad)
+            {
+                ruta.insert(0, ((Especialidad) obj).getNombre() + "/");
+            } else if (obj instanceof Hospital)
+            {
+                ruta.insert(0, ((Hospital) obj).getNombre() + "/");
+            } else if (obj instanceof Dependencia)
+            {
+                ruta.insert(0, ((Dependencia) obj).getNombre() + "/");
+            }
+            nodo = nodo.getArriba();
+        }
+        return ruta.toString();
     }
 
     //---------------------------------TABLAS----------------------------------------
@@ -225,7 +252,7 @@ public class Manipula
                         iconDep = new ImageIcon(scaledImg);
                         modelo.addRow(new Object[]
                         {
-                            iconDep,e.getClave(), e.getNombre(), e.getNumeroCamas(), e.getNumeroMedicos()
+                            iconDep, e.getClave(), e.getNombre(), e.getNumeroCamas(), e.getNumeroMedicos()
                         });
                     } else
                     {
@@ -264,10 +291,15 @@ public class Manipula
                         return super.getColumnClass(columnIndex);
                     }
                 };
+
+                DateTimeFormatter formatoFecha = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
                 do
                 {
                     Paciente p = (Paciente) aux.getObj();
                     URL url = Manipula.class.getClassLoader().getResource("vista/imagenes/paciente_tab.png");
+
+                    String vigencia = p.getVigencia().format(formatoFecha);
 
                     if (url != null)
                     {
@@ -278,7 +310,7 @@ public class Manipula
                         iconDep = new ImageIcon(scaledImg);
                         modelo.addRow(new Object[]
                         {
-                            iconDep, p.getClave(), p.getNombre(), p.getStatus(), p.getSexo(), p.getVigencia()
+                            iconDep, p.getClave(), p.getNombre(), p.getStatus(), p.getSexo(), vigencia
                         });
                     } else
                     {
@@ -286,7 +318,7 @@ public class Manipula
                         // Si no se encuentra el archivo, puedes optar por mostrar un icono por defecto
                         modelo.addRow(new Object[]
                         {
-                            new ImageIcon(), p.getClave(), p.getNombre(), p.getStatus(), p.getSexo(), p.getVigencia()
+                            new ImageIcon(), p.getClave(), p.getNombre(), p.getStatus(), p.getSexo(), vigencia
                         });
                     }
 

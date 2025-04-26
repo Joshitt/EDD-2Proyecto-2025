@@ -10,14 +10,19 @@ import java.awt.Color;
 import javax.swing.JOptionPane;
 import modelo.*;
 import controlador.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import javax.swing.JComboBox;
+import javax.swing.JFormattedTextField;
 import javax.swing.table.DefaultTableModel;
+import vista.VentanaPrincipal;
 
 /**
  *
  * @author otjos
  */
-public class VentanaCrearEsp extends javax.swing.JDialog
+public class VentanaCrearPac extends javax.swing.JDialog
 {
 
     /**
@@ -26,20 +31,25 @@ public class VentanaCrearEsp extends javax.swing.JDialog
     private VentanaPrincipal principal;
     private String rutaActual;
 
-    public VentanaCrearEsp(java.awt.Frame parent, boolean modal, VentanaPrincipal principal, String rutaActual)
+    public VentanaCrearPac(java.awt.Frame parent, boolean modal, VentanaPrincipal principal, String rutaActual)
     {
         super(parent, modal);
         this.principal = principal;
         this.rutaActual = rutaActual;
         initComponents();
 
-        String claveTemporal = String.format("E.%03d", Datos.getContadorGeneral() + 1);
+        String claveTemporal = String.format("P.%03d", Datos.getContadorGeneral() + 1);
         txtClave.setText(claveTemporal);
 
         llenarComboDependencias(JCDependencia, Var.getM().getR());
         JCDependencia.addActionListener(e ->
         {
-            agregarHospitales(JCDependencia, JCHospital, Var.getM().getR());
+            agregarHospitales(JCDependencia, JCHospital1, Var.getM().getR());
+        });
+
+        JCHospital1.addActionListener(e ->
+        {
+            agregarEspecialidades(JCDependencia, JCHospital1, JCEspecialidad, Var.getM().getR());
         });
 
     }
@@ -61,21 +71,24 @@ public class VentanaCrearEsp extends javax.swing.JDialog
         Clave = new javax.swing.JLabel();
         Clave1 = new javax.swing.JLabel();
         txtClave = new javax.swing.JTextField();
-        txtNumCamas = new javax.swing.JTextField();
         jSeparator1 = new javax.swing.JSeparator();
-        jSeparator2 = new javax.swing.JSeparator();
         bgAbj = new javax.swing.JPanel();
         btnGuardar = new javax.swing.JLabel();
         JCDependencia = new javax.swing.JComboBox<>();
         Clave2 = new javax.swing.JLabel();
-        txtNombre = new javax.swing.JTextField();
         jSeparator3 = new javax.swing.JSeparator();
         Clave3 = new javax.swing.JLabel();
-        Clave4 = new javax.swing.JLabel();
-        txtNumMedicos = new javax.swing.JTextField();
-        jSeparator4 = new javax.swing.JSeparator();
-        JCHospital = new javax.swing.JComboBox<>();
+        JCEspecialidad = new javax.swing.JComboBox<>();
         Clave5 = new javax.swing.JLabel();
+        Clave6 = new javax.swing.JLabel();
+        JCHospital1 = new javax.swing.JComboBox<>();
+        txtFormatoFecha = new javax.swing.JFormattedTextField();
+        jSeparator5 = new javax.swing.JSeparator();
+        Clave7 = new javax.swing.JLabel();
+        Clave8 = new javax.swing.JLabel();
+        txtNombre1 = new javax.swing.JTextField();
+        jCSexo = new javax.swing.JComboBox<>();
+        jCEstatus = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(300, 250));
@@ -89,19 +102,19 @@ public class VentanaCrearEsp extends javax.swing.JDialog
 
         bgArb.setBackground(new java.awt.Color(102, 153, 255));
 
-        iconPropiedas.setIcon(new javax.swing.ImageIcon(getClass().getResource("/vista/imagenes/estetoscopio.png"))); // NOI18N
+        iconPropiedas.setIcon(new javax.swing.ImageIcon(getClass().getResource("/vista/imagenes/paciente.png"))); // NOI18N
 
         txtNombreClase.setFont(new java.awt.Font("Roboto Black", 1, 14)); // NOI18N
         txtNombreClase.setForeground(new java.awt.Color(51, 51, 51));
-        txtNombreClase.setText("ESPECIALIDAD");
+        txtNombreClase.setText("PACIENTE");
 
         javax.swing.GroupLayout bgArbLayout = new javax.swing.GroupLayout(bgArb);
         bgArb.setLayout(bgArbLayout);
         bgArbLayout.setHorizontalGroup(
             bgArbLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(bgArbLayout.createSequentialGroup()
-                .addGap(25, 25, 25)
-                .addComponent(iconPropiedas, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(57, 57, 57)
+                .addComponent(iconPropiedas)
                 .addGap(18, 18, 18)
                 .addComponent(txtNombreClase, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(66, Short.MAX_VALUE))
@@ -115,19 +128,19 @@ public class VentanaCrearEsp extends javax.swing.JDialog
                 .addContainerGap())
         );
 
-        bg.add(bgArb, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, 60));
+        bg.add(bgArb, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, 32));
 
         Clave.setFont(new java.awt.Font("Roboto Light", 1, 12)); // NOI18N
         Clave.setForeground(new java.awt.Color(51, 51, 51));
         Clave.setText("CLAVE");
         Clave.setToolTipText("");
-        bg.add(Clave, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 60, 56, 11));
+        bg.add(Clave, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 40, 56, 11));
 
         Clave1.setFont(new java.awt.Font("Roboto Light", 1, 12)); // NOI18N
         Clave1.setForeground(new java.awt.Color(51, 51, 51));
         Clave1.setText("NOMBRE");
         Clave1.setToolTipText("");
-        bg.add(Clave1, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 60, 79, -1));
+        bg.add(Clave1, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 30, 79, -1));
 
         txtClave.setEditable(false);
         txtClave.setBackground(java.awt.Color.white);
@@ -142,45 +155,11 @@ public class VentanaCrearEsp extends javax.swing.JDialog
                 txtClaveActionPerformed(evt);
             }
         });
-        bg.add(txtClave, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 80, 71, -1));
-
-        txtNumCamas.setBackground(java.awt.Color.white);
-        txtNumCamas.setColumns(45);
-        txtNumCamas.setFont(new java.awt.Font("Roboto Medium", 0, 12)); // NOI18N
-        txtNumCamas.setForeground(new java.awt.Color(102, 102, 102));
-        txtNumCamas.setText("Ingresa el numero de camas");
-        txtNumCamas.setBorder(null);
-        txtNumCamas.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
-        txtNumCamas.addMouseListener(new java.awt.event.MouseAdapter()
-        {
-            public void mousePressed(java.awt.event.MouseEvent evt)
-            {
-                txtNumCamasMousePressed(evt);
-            }
-        });
-        txtNumCamas.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                txtNumCamasActionPerformed(evt);
-            }
-        });
-        txtNumCamas.addKeyListener(new java.awt.event.KeyAdapter()
-        {
-            public void keyTyped(java.awt.event.KeyEvent evt)
-            {
-                txtNumCamasKeyTyped(evt);
-            }
-        });
-        bg.add(txtNumCamas, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 110, 160, -1));
+        bg.add(txtClave, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 50, 71, -1));
 
         jSeparator1.setBackground(new java.awt.Color(0, 0, 0));
         jSeparator1.setForeground(new java.awt.Color(0, 0, 0));
-        bg.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 100, 57, -1));
-
-        jSeparator2.setBackground(new java.awt.Color(0, 0, 0));
-        jSeparator2.setForeground(new java.awt.Color(0, 0, 0));
-        bg.add(jSeparator2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 130, 280, -1));
+        bg.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 120, 57, -1));
 
         bgAbj.setBackground(new java.awt.Color(102, 153, 255));
 
@@ -232,105 +211,160 @@ public class VentanaCrearEsp extends javax.swing.JDialog
                 JCDependenciaActionPerformed(evt);
             }
         });
-        bg.add(JCDependencia, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 170, 180, 20));
+        bg.add(JCDependencia, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 140, 180, 20));
 
         Clave2.setFont(new java.awt.Font("Roboto Light", 1, 12)); // NOI18N
         Clave2.setForeground(new java.awt.Color(51, 51, 51));
         Clave2.setText("DEPENDENCIA");
         Clave2.setToolTipText("");
-        bg.add(Clave2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 170, 90, -1));
-
-        txtNombre.setBackground(java.awt.Color.white);
-        txtNombre.setColumns(45);
-        txtNombre.setFont(new java.awt.Font("Roboto Medium", 0, 12)); // NOI18N
-        txtNombre.setForeground(new java.awt.Color(102, 102, 102));
-        txtNombre.setText("Ingrese el nombre ");
-        txtNombre.setBorder(null);
-        txtNombre.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
-        txtNombre.addMouseListener(new java.awt.event.MouseAdapter()
-        {
-            public void mousePressed(java.awt.event.MouseEvent evt)
-            {
-                txtNombreMousePressed(evt);
-            }
-        });
-        txtNombre.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                txtNombreActionPerformed(evt);
-            }
-        });
-        bg.add(txtNombre, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 80, 183, -1));
+        bg.add(Clave2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 140, 90, -1));
 
         jSeparator3.setBackground(new java.awt.Color(0, 0, 0));
         jSeparator3.setForeground(new java.awt.Color(0, 0, 0));
-        bg.add(jSeparator3, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 100, 196, -1));
+        bg.add(jSeparator3, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 70, 196, -1));
 
         Clave3.setFont(new java.awt.Font("Roboto Light", 1, 12)); // NOI18N
         Clave3.setForeground(new java.awt.Color(51, 51, 51));
-        Clave3.setText("CAMAS");
+        Clave3.setText("SEXO");
         Clave3.setToolTipText("");
-        bg.add(Clave3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 110, 79, 20));
+        bg.add(Clave3, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 80, 79, 20));
 
-        Clave4.setFont(new java.awt.Font("Roboto Light", 1, 12)); // NOI18N
-        Clave4.setForeground(new java.awt.Color(51, 51, 51));
-        Clave4.setText("MEDICOS");
-        Clave4.setToolTipText("");
-        bg.add(Clave4, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 140, 79, 20));
-
-        txtNumMedicos.setBackground(java.awt.Color.white);
-        txtNumMedicos.setColumns(45);
-        txtNumMedicos.setFont(new java.awt.Font("Roboto Medium", 0, 12)); // NOI18N
-        txtNumMedicos.setForeground(new java.awt.Color(102, 102, 102));
-        txtNumMedicos.setText("Ingresa el numero de medicos");
-        txtNumMedicos.setBorder(null);
-        txtNumMedicos.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
-        txtNumMedicos.addMouseListener(new java.awt.event.MouseAdapter()
-        {
-            public void mousePressed(java.awt.event.MouseEvent evt)
-            {
-                txtNumMedicosMousePressed(evt);
-            }
-        });
-        txtNumMedicos.addActionListener(new java.awt.event.ActionListener()
+        JCEspecialidad.setBackground(new java.awt.Color(204, 204, 204));
+        JCEspecialidad.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        JCEspecialidad.setForeground(new java.awt.Color(0, 0, 0));
+        JCEspecialidad.setBorder(null);
+        JCEspecialidad.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
             {
-                txtNumMedicosActionPerformed(evt);
+                JCEspecialidadActionPerformed(evt);
             }
         });
-        txtNumMedicos.addKeyListener(new java.awt.event.KeyAdapter()
-        {
-            public void keyTyped(java.awt.event.KeyEvent evt)
-            {
-                txtNumMedicosKeyTyped(evt);
-            }
-        });
-        bg.add(txtNumMedicos, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 140, 170, -1));
-
-        jSeparator4.setBackground(new java.awt.Color(0, 0, 0));
-        jSeparator4.setForeground(new java.awt.Color(0, 0, 0));
-        bg.add(jSeparator4, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 160, 280, -1));
-
-        JCHospital.setBackground(new java.awt.Color(204, 204, 204));
-        JCHospital.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        JCHospital.setForeground(new java.awt.Color(0, 0, 0));
-        JCHospital.setBorder(null);
-        JCHospital.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                JCHospitalActionPerformed(evt);
-            }
-        });
-        bg.add(JCHospital, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 200, 180, 20));
+        bg.add(JCEspecialidad, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 200, 180, 20));
 
         Clave5.setFont(new java.awt.Font("Roboto Light", 1, 12)); // NOI18N
         Clave5.setForeground(new java.awt.Color(51, 51, 51));
-        Clave5.setText("HOSPITAL");
+        Clave5.setText("ESPECIALIDAD");
         Clave5.setToolTipText("");
-        bg.add(Clave5, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 200, 90, -1));
+        bg.add(Clave5, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 200, 90, -1));
+
+        Clave6.setFont(new java.awt.Font("Roboto Light", 1, 12)); // NOI18N
+        Clave6.setForeground(new java.awt.Color(51, 51, 51));
+        Clave6.setText("HOSPITAL");
+        Clave6.setToolTipText("");
+        bg.add(Clave6, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 170, 90, -1));
+
+        JCHospital1.setBackground(new java.awt.Color(204, 204, 204));
+        JCHospital1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        JCHospital1.setForeground(new java.awt.Color(0, 0, 0));
+        JCHospital1.setBorder(null);
+        JCHospital1.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                JCHospital1ActionPerformed(evt);
+            }
+        });
+        bg.add(JCHospital1, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 170, 180, 20));
+
+        txtFormatoFecha.setBackground(new java.awt.Color(255, 255, 255));
+        txtFormatoFecha.setBorder(null);
+        txtFormatoFecha.setForeground(new java.awt.Color(102, 102, 102));
+        try
+        {
+            txtFormatoFecha.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("##/##/####")));
+        } catch (java.text.ParseException ex)
+        {
+            ex.printStackTrace();
+        }
+        txtFormatoFecha.setFont(new java.awt.Font("Roboto Medium", 0, 12)); // NOI18N
+        txtFormatoFecha.addMouseListener(new java.awt.event.MouseAdapter()
+        {
+            public void mousePressed(java.awt.event.MouseEvent evt)
+            {
+                txtFormatoFechaMousePressed(evt);
+            }
+        });
+        txtFormatoFecha.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                txtFormatoFechaActionPerformed(evt);
+            }
+        });
+        txtFormatoFecha.addKeyListener(new java.awt.event.KeyAdapter()
+        {
+            public void keyTyped(java.awt.event.KeyEvent evt)
+            {
+                txtFormatoFechaKeyTyped(evt);
+            }
+        });
+        bg.add(txtFormatoFecha, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 100, 60, 20));
+
+        jSeparator5.setBackground(new java.awt.Color(0, 0, 0));
+        jSeparator5.setForeground(new java.awt.Color(0, 0, 0));
+        bg.add(jSeparator5, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 70, 57, -1));
+
+        Clave7.setFont(new java.awt.Font("Roboto Light", 1, 12)); // NOI18N
+        Clave7.setForeground(new java.awt.Color(51, 51, 51));
+        Clave7.setText("VIGENCIA");
+        Clave7.setToolTipText("");
+        bg.add(Clave7, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 80, 79, 20));
+
+        Clave8.setFont(new java.awt.Font("Roboto Light", 1, 12)); // NOI18N
+        Clave8.setForeground(new java.awt.Color(51, 51, 51));
+        Clave8.setText("ESTATUS");
+        Clave8.setToolTipText("");
+        bg.add(Clave8, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 80, 79, 20));
+
+        txtNombre1.setBackground(java.awt.Color.white);
+        txtNombre1.setColumns(45);
+        txtNombre1.setFont(new java.awt.Font("Roboto Medium", 0, 12)); // NOI18N
+        txtNombre1.setForeground(new java.awt.Color(102, 102, 102));
+        txtNombre1.setText("Ingrese el nombre ");
+        txtNombre1.setBorder(null);
+        txtNombre1.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
+        txtNombre1.addMouseListener(new java.awt.event.MouseAdapter()
+        {
+            public void mousePressed(java.awt.event.MouseEvent evt)
+            {
+                txtNombre1MousePressed(evt);
+            }
+        });
+        txtNombre1.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                txtNombre1ActionPerformed(evt);
+            }
+        });
+        bg.add(txtNombre1, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 50, 183, -1));
+
+        jCSexo.setBackground(new java.awt.Color(204, 204, 204));
+        jCSexo.setForeground(new java.awt.Color(0, 0, 0));
+        jCSexo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Selecciona...", "Masculino", "Femenino" }));
+        jCSexo.setBorder(null);
+        jCSexo.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                jCSexoActionPerformed(evt);
+            }
+        });
+        bg.add(jCSexo, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 100, -1, 20));
+
+        jCEstatus.setBackground(new java.awt.Color(204, 204, 204));
+        jCEstatus.setForeground(new java.awt.Color(0, 0, 0));
+        jCEstatus.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Selecciona...", "Activo", "Inactivo" }));
+        jCEstatus.setBorder(null);
+        jCEstatus.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                jCEstatusActionPerformed(evt);
+            }
+        });
+        bg.add(jCEstatus, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 100, -1, 20));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -351,11 +385,6 @@ public class VentanaCrearEsp extends javax.swing.JDialog
 
     }//GEN-LAST:event_txtClaveActionPerformed
 
-    private void txtNumCamasActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtNumCamasActionPerformed
-    {//GEN-HEADEREND:event_txtNumCamasActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtNumCamasActionPerformed
-
     private void btnGuardarMouseEntered(java.awt.event.MouseEvent evt)//GEN-FIRST:event_btnGuardarMouseEntered
     {//GEN-HEADEREND:event_btnGuardarMouseEntered
         btnGuardar.setBackground(new Color(102, 175, 240));
@@ -366,16 +395,11 @@ public class VentanaCrearEsp extends javax.swing.JDialog
         btnGuardar.setBackground(new Color(102, 153, 255));
     }//GEN-LAST:event_btnGuardarMouseExited
 
-    private void txtNumCamasMousePressed(java.awt.event.MouseEvent evt)//GEN-FIRST:event_txtNumCamasMousePressed
-    {//GEN-HEADEREND:event_txtNumCamasMousePressed
-        txtNumCamas.setText("");
-        txtNumCamas.setForeground(Color.black);
-    }//GEN-LAST:event_txtNumCamasMousePressed
-
     private void btnGuardarMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_btnGuardarMouseClicked
     {//GEN-HEADEREND:event_btnGuardarMouseClicked
         //JOptionPane.showMessageDialog(this, "correcto");
         nuevo();
+        
     }//GEN-LAST:event_btnGuardarMouseClicked
 
     private void JCDependenciaActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_JCDependenciaActionPerformed
@@ -383,50 +407,55 @@ public class VentanaCrearEsp extends javax.swing.JDialog
         // TODO add your handling code here:
     }//GEN-LAST:event_JCDependenciaActionPerformed
 
-    private void txtNombreMousePressed(java.awt.event.MouseEvent evt)//GEN-FIRST:event_txtNombreMousePressed
-    {//GEN-HEADEREND:event_txtNombreMousePressed
-        txtNombre.setText("");
-        txtNombre.setForeground(Color.black);
-    }//GEN-LAST:event_txtNombreMousePressed
-
-    private void txtNombreActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtNombreActionPerformed
-    {//GEN-HEADEREND:event_txtNombreActionPerformed
+    private void JCEspecialidadActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_JCEspecialidadActionPerformed
+    {//GEN-HEADEREND:event_JCEspecialidadActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtNombreActionPerformed
+    }//GEN-LAST:event_JCEspecialidadActionPerformed
 
-    private void txtNumMedicosMousePressed(java.awt.event.MouseEvent evt)//GEN-FIRST:event_txtNumMedicosMousePressed
-    {//GEN-HEADEREND:event_txtNumMedicosMousePressed
-        txtNumMedicos.setText("");
-        txtNumMedicos.setForeground(Color.black);
-    }//GEN-LAST:event_txtNumMedicosMousePressed
-
-    private void txtNumMedicosActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtNumMedicosActionPerformed
-    {//GEN-HEADEREND:event_txtNumMedicosActionPerformed
+    private void JCHospital1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_JCHospital1ActionPerformed
+    {//GEN-HEADEREND:event_JCHospital1ActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtNumMedicosActionPerformed
+    }//GEN-LAST:event_JCHospital1ActionPerformed
 
-    private void JCHospitalActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_JCHospitalActionPerformed
-    {//GEN-HEADEREND:event_JCHospitalActionPerformed
+    private void txtFormatoFechaActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtFormatoFechaActionPerformed
+    {//GEN-HEADEREND:event_txtFormatoFechaActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_JCHospitalActionPerformed
+    }//GEN-LAST:event_txtFormatoFechaActionPerformed
 
-    private void txtNumCamasKeyTyped(java.awt.event.KeyEvent evt)//GEN-FIRST:event_txtNumCamasKeyTyped
-    {//GEN-HEADEREND:event_txtNumCamasKeyTyped
+    private void txtFormatoFechaKeyTyped(java.awt.event.KeyEvent evt)//GEN-FIRST:event_txtFormatoFechaKeyTyped
+    {//GEN-HEADEREND:event_txtFormatoFechaKeyTyped
         char c = evt.getKeyChar();
         if (!Character.isDigit(c) && c != '\b')
         { // solo números
             evt.consume(); // no acepta la tecla
         }
-    }//GEN-LAST:event_txtNumCamasKeyTyped
+    }//GEN-LAST:event_txtFormatoFechaKeyTyped
 
-    private void txtNumMedicosKeyTyped(java.awt.event.KeyEvent evt)//GEN-FIRST:event_txtNumMedicosKeyTyped
-    {//GEN-HEADEREND:event_txtNumMedicosKeyTyped
-        char c = evt.getKeyChar();
-        if (!Character.isDigit(c) && c != '\b')
-        { // solo números
-            evt.consume(); // no acepta la tecla
-        }
-    }//GEN-LAST:event_txtNumMedicosKeyTyped
+    private void txtFormatoFechaMousePressed(java.awt.event.MouseEvent evt)//GEN-FIRST:event_txtFormatoFechaMousePressed
+    {//GEN-HEADEREND:event_txtFormatoFechaMousePressed
+        txtFormatoFecha.setCaretPosition(0);
+    }//GEN-LAST:event_txtFormatoFechaMousePressed
+
+    private void txtNombre1MousePressed(java.awt.event.MouseEvent evt)//GEN-FIRST:event_txtNombre1MousePressed
+    {//GEN-HEADEREND:event_txtNombre1MousePressed
+        txtNombre1.setText("");
+        txtNombre1.setForeground(Color.black);
+    }//GEN-LAST:event_txtNombre1MousePressed
+
+    private void txtNombre1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtNombre1ActionPerformed
+    {//GEN-HEADEREND:event_txtNombre1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtNombre1ActionPerformed
+
+    private void jCSexoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jCSexoActionPerformed
+    {//GEN-HEADEREND:event_jCSexoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jCSexoActionPerformed
+
+    private void jCEstatusActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jCEstatusActionPerformed
+    {//GEN-HEADEREND:event_jCEstatusActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jCEstatusActionPerformed
 
     /**
      * @param args the command line arguments
@@ -484,50 +513,48 @@ public class VentanaCrearEsp extends javax.swing.JDialog
 //    }
     private void nuevo()
     {
-        if (camposValidados())
+        if (camposValidados() && validarFechaVigencia(txtFormatoFecha))
         {
-            String nombre = Manipula.formatoPalabras(txtNombre.getText());
-
-            String nCamas = txtNumCamas.getText().trim();
-            String nMedicos = txtNumMedicos.getText().trim();
-
-            if (!Manipula.esEnteroValido(nCamas) || !Manipula.esEnteroValido(nMedicos))
-            {
-                JOptionPane.showMessageDialog(this, "Ingresa numeros validos");
-                return;
-            }
-
-            int numCamas = Integer.parseInt(txtNumCamas.getText());
-            int numMedicos = Integer.parseInt(txtNumMedicos.getText());
+            String nombre = Manipula.formatoPalabras(txtNombre1.getText());
+            String vigencia = txtFormatoFecha.getText().trim();
 
             String dependencia = (String) JCDependencia.getSelectedItem();
-            String hospital = (String) JCHospital.getSelectedItem();
-            Especialidad e = new Especialidad(numCamas, numMedicos, nombre);
+            String hospital = (String) JCHospital1.getSelectedItem();
+            String especialidad = (String) JCEspecialidad.getSelectedItem();
+            String sexo = (String) jCSexo.getSelectedItem();
+            String estatus = (String) jCEstatus.getSelectedItem();
 
-            String[] ruta = new String[3];
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            LocalDate fechaVigencia = LocalDate.parse(txtFormatoFecha.getText().trim(), formatter);
+            Paciente p = new Paciente(sexo, estatus, fechaVigencia, nombre);
+
+            String[] ruta = new String[4];
             ruta[0] = dependencia;
             ruta[1] = hospital;
-            ruta[2] = nombre;
-            Manipula.insertar(e, nombre, ruta);
+            ruta[2] = especialidad;
+            ruta[3] = nombre;
+            Manipula.insertar(p, nombre, ruta);
 
-            //NodoM nodo = Var.getM().buscarRuta(Var.getM().getR(), ruta, 0);
-            //NodoM nodo = Var.getM().getR();
             NodoM nodo = Var.getM().busca(Var.getM().getR(), ruta[0]);
             NodoM nodoHospital = Var.getM().busca(nodo.getAbajo(), ruta[1]);
-           //NodoM nodoEspecialidad = Var.getM().busca(nodoHospital.getAbajo(), ruta[2]);
-           principal.getTxtRuta().setText(Manipula.construirRutaDesdeNodo(nodoHospital));
+            NodoM nodoEspecialidad = Var.getM().busca(nodoHospital.getAbajo(), ruta[2]);
+            //NodoM nodoPaciente = Var.getM().busca(nodoEspecialidad.getAbajo(), ruta[3]);
 
-            DefaultTableModel modelo = Manipula.actualizarTabla(nodoHospital.getAbajo());
+            principal.getTxtRuta().setText(Manipula.construirRutaDesdeNodo(nodoEspecialidad));  
+            DefaultTableModel modelo = Manipula.actualizarTabla(nodoEspecialidad.getAbajo());
 
             System.out.println(Var.getM().desplegar(Var.getM().getR(), ""));
 
             principal.getTbDatos().setModel(modelo);
-            ManipulaTablas.personalizarTabla(principal.getTbDatos(), "Especiaidad");
+            ManipulaTablas.personalizarTabla(principal.getTbDatos(), "Paciente");
+            
+            
+            
 
             ManipulaArchivos.guardar(Var.getM(), "datos.dat");
             ManipulaArchivos.guardarContador(Datos.getContadorGeneral(), "contador.dat");
 
-            VentanaCrearEsp.this.dispose();
+            VentanaCrearPac.this.dispose();
             //JOptionPane.showMessageDialog(this, "Dependencia guardada");
         } else
         {
@@ -538,11 +565,14 @@ public class VentanaCrearEsp extends javax.swing.JDialog
     private boolean camposValidados()
     {
         String dependencia = (String) JCDependencia.getSelectedItem();
-        String hospital = (String) JCHospital.getSelectedItem();
+        String hospital = (String) JCHospital1.getSelectedItem();
+        String especialidad = (String) JCEspecialidad.getSelectedItem();
+        String status = (String) jCEstatus.getSelectedItem();
+        String sexo = (String) jCSexo.getSelectedItem();
 
-        if (txtNombre.getText().trim().isBlank()
-                || txtNumCamas.getText().trim().isBlank()
-                || txtNumMedicos.getText().trim().isBlank())
+        if (txtNombre1.getText().trim().isBlank()
+                || txtFormatoFecha.getText().trim().isBlank()
+                || !validarFechaVigencia(txtFormatoFecha))
         {
             JOptionPane.showMessageDialog(this, "Todos los campos de texto deben estar llenos");
             return false;
@@ -559,7 +589,21 @@ public class VentanaCrearEsp extends javax.swing.JDialog
             JOptionPane.showMessageDialog(this, "Debes seleccionar un hospital .");
             return false;
         }
-
+        if (especialidad == null || especialidad.equals("Selecciona..."))
+        {
+            JOptionPane.showMessageDialog(this, "Debes seleccionar una especialidad");
+            return false;
+        }
+        if (sexo == null || sexo.equals("Selecciona..."))
+        {
+            JOptionPane.showMessageDialog(this, "Debes seleccionar un sexo");
+            return false;
+        }
+        if (status == null || status.equals("Selecciona..."))
+        {
+            JOptionPane.showMessageDialog(this, "Debes seleccionar el estatus del paciente");
+            return false;
+        }
         return true;
     }
 
@@ -622,29 +666,95 @@ public class VentanaCrearEsp extends javax.swing.JDialog
 
     }
 
+    public static void agregarEspecialidades(JComboBox comboDep, JComboBox comboHos, JComboBox comboEsp, NodoM r)
+    {
+        String dependencia = (String) comboDep.getSelectedItem();
+        String hospital = (String) comboHos.getSelectedItem();
+
+        comboEsp.removeAllItems();
+        comboEsp.addItem("Selecciona...");
+        if (dependencia != null && !dependencia.equals("Selecciona...")
+                && hospital != null && !hospital.equals("Selecciona..."))
+        {
+            NodoM nodoDep = Var.getM().busca(r, dependencia);
+            NodoM nodoHos = Var.getM().busca(nodoDep.getAbajo(), hospital);
+
+            if (nodoHos != null && nodoHos.getAbajo() != null)
+            {
+                boolean tiene = false;
+                NodoM aux = nodoHos.getAbajo().getSiguiente();
+                do
+                {
+                    if (aux.getObj() instanceof Especialidad)
+                    {
+                        comboEsp.addItem(aux.getEt());
+                        tiene = true;
+                    }
+                    aux = aux.getSiguiente();
+                } while (aux != nodoHos.getAbajo().getSiguiente());
+                comboEsp.setEnabled(tiene);
+            } else
+            {
+                comboEsp.setEnabled(false);
+            }
+        } else
+        {
+            comboEsp.setEnabled(false);
+        }
+
+    }
+
+    private static boolean validarFechaVigencia(JFormattedTextField txtVigencia)
+    {
+        String texto = txtVigencia.getText();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+        try
+        {
+            LocalDate fechaIngresada = LocalDate.parse(texto, formatter);
+            LocalDate hoy = LocalDate.now();
+
+            // Verifica si la fecha es válida (no en el pasado)
+            if (fechaIngresada.isBefore(hoy))
+            {
+                JOptionPane.showMessageDialog(null, "No puede ser pasado");
+                return false;
+            }
+            return true;
+        } catch (DateTimeParseException e)
+        {
+            JOptionPane.showMessageDialog(null, "Formato de fecha mal");
+            return false;
+        }
+    }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel Clave;
     private javax.swing.JLabel Clave1;
     private javax.swing.JLabel Clave2;
     private javax.swing.JLabel Clave3;
-    private javax.swing.JLabel Clave4;
     private javax.swing.JLabel Clave5;
+    private javax.swing.JLabel Clave6;
+    private javax.swing.JLabel Clave7;
+    private javax.swing.JLabel Clave8;
     private javax.swing.JComboBox<String> JCDependencia;
-    private javax.swing.JComboBox<String> JCHospital;
+    private javax.swing.JComboBox<String> JCEspecialidad;
+    private javax.swing.JComboBox<String> JCHospital1;
+    private javax.swing.JComboBox<String> JCNivel1;
     private javax.swing.JPanel bg;
     private javax.swing.JPanel bgAbj;
     private javax.swing.JPanel bgArb;
     private javax.swing.JLabel btnGuardar;
     private javax.swing.JLabel iconPropiedas;
+    private javax.swing.JComboBox<String> jCEstatus;
+    private javax.swing.JComboBox<String> jCSexo;
     private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
-    private javax.swing.JSeparator jSeparator4;
+    private javax.swing.JSeparator jSeparator5;
     private javax.swing.JTextField txtClave;
-    private javax.swing.JTextField txtNombre;
+    private javax.swing.JFormattedTextField txtFormatoFecha;
+    private javax.swing.JTextField txtNombre1;
     private javax.swing.JLabel txtNombreClase;
-    private javax.swing.JTextField txtNumCamas;
-    private javax.swing.JTextField txtNumMedicos;
     // End of variables declaration//GEN-END:variables
 }
