@@ -16,6 +16,7 @@ import java.time.format.DateTimeParseException;
 import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.table.DefaultTableModel;
+import vista.VentanaPrincipal;
 
 /**
  *
@@ -398,6 +399,7 @@ public class VentanaCrearPac extends javax.swing.JDialog
     {//GEN-HEADEREND:event_btnGuardarMouseClicked
         //JOptionPane.showMessageDialog(this, "correcto");
         nuevo();
+        
     }//GEN-LAST:event_btnGuardarMouseClicked
 
     private void JCDependenciaActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_JCDependenciaActionPerformed
@@ -538,12 +540,16 @@ public class VentanaCrearPac extends javax.swing.JDialog
             NodoM nodoEspecialidad = Var.getM().busca(nodoHospital.getAbajo(), ruta[2]);
             //NodoM nodoPaciente = Var.getM().busca(nodoEspecialidad.getAbajo(), ruta[3]);
 
+            principal.getTxtRuta().setText(Manipula.construirRutaDesdeNodo(nodoEspecialidad));  
             DefaultTableModel modelo = Manipula.actualizarTabla(nodoEspecialidad.getAbajo());
 
             System.out.println(Var.getM().desplegar(Var.getM().getR(), ""));
 
             principal.getTbDatos().setModel(modelo);
             ManipulaTablas.personalizarTabla(principal.getTbDatos(), "Paciente");
+            
+            
+            
 
             ManipulaArchivos.guardar(Var.getM(), "datos.dat");
             ManipulaArchivos.guardarContador(Datos.getContadorGeneral(), "contador.dat");

@@ -75,6 +75,30 @@ public class Manipula
         }
     }
 
+    public  static String construirRutaDesdeNodo(NodoM nodo)
+    {
+        StringBuilder ruta = new StringBuilder();
+        while (nodo != null)
+        {
+            Object obj = nodo.getObj();
+            if (obj instanceof Paciente)
+            {
+                ruta.insert(0, ((Paciente) obj).getNombre() + "/");
+            } else if (obj instanceof Especialidad)
+            {
+                ruta.insert(0, ((Especialidad) obj).getNombre() + "/");
+            } else if (obj instanceof Hospital)
+            {
+                ruta.insert(0, ((Hospital) obj).getNombre() + "/");
+            } else if (obj instanceof Dependencia)
+            {
+                ruta.insert(0, ((Dependencia) obj).getNombre() + "/");
+            }
+            nodo = nodo.getArriba();
+        }
+        return ruta.toString();
+    }
+
     //---------------------------------TABLAS----------------------------------------
     public static DefaultTableModel actualizarTabla(NodoM r)
     {
@@ -267,15 +291,15 @@ public class Manipula
                         return super.getColumnClass(columnIndex);
                     }
                 };
-                
-                DateTimeFormatter formatoFecha=DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                
+
+                DateTimeFormatter formatoFecha = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
                 do
                 {
                     Paciente p = (Paciente) aux.getObj();
                     URL url = Manipula.class.getClassLoader().getResource("vista/imagenes/paciente_tab.png");
-                    
-                    String vigencia=p.getVigencia().format(formatoFecha);
+
+                    String vigencia = p.getVigencia().format(formatoFecha);
 
                     if (url != null)
                     {

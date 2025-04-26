@@ -231,6 +231,9 @@
                 </Property>
                 <Property name="opaque" type="boolean" value="true"/>
               </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="iconFlechaArbMouseClicked"/>
+              </Events>
             </Component>
             <Container class="javax.swing.JPanel" name="marcoBarraRuta">
               <Properties>
@@ -282,6 +285,9 @@
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtRutaActionPerformed"/>
                   </Events>
+                  <AuxValues>
+                    <AuxValue name="JavaCodeGenerator_SerializeTo" type="java.lang.String" value="VentanaPrincipal_txtRuta"/>
+                  </AuxValues>
                 </Component>
                 <Component class="javax.swing.JLabel" name="iconComp">
                   <Properties>

@@ -515,6 +515,7 @@ public class VentanaCrearEsp extends javax.swing.JDialog
             NodoM nodo = Var.getM().busca(Var.getM().getR(), ruta[0]);
             NodoM nodoHospital = Var.getM().busca(nodo.getAbajo(), ruta[1]);
            //NodoM nodoEspecialidad = Var.getM().busca(nodoHospital.getAbajo(), ruta[2]);
+           principal.getTxtRuta().setText(Manipula.construirRutaDesdeNodo(nodoHospital));
 
             DefaultTableModel modelo = Manipula.actualizarTabla(nodoHospital.getAbajo());
 

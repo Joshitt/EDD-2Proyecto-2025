@@ -479,6 +479,7 @@ public class VentanaCrearHos extends javax.swing.JDialog
             //NodoM nodo = Var.getM().getR();
             NodoM nodo = Var.getM().busca(Var.getM().getR(), ruta[0]);
             //NodoM nodoHospital = Var.getM().busca(nodo.getAbajo(), ruta[1]);
+            principal.getTxtRuta().setText(Manipula.construirRutaDesdeNodo(nodo));
             DefaultTableModel modelo = Manipula.actualizarTabla(nodo.getAbajo());
             
             System.out.println(Var.getM().desplegar(Var.getM().getR(), ""));

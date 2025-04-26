@@ -142,6 +142,13 @@ public class VentanaPrincipal extends javax.swing.JFrame
         iconFlechaArb.setBorder(new EmptyBorder(3, 3, 3, 3));
         iconFlechaArb.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         iconFlechaArb.setOpaque(true);
+        iconFlechaArb.addMouseListener(new java.awt.event.MouseAdapter()
+        {
+            public void mouseClicked(java.awt.event.MouseEvent evt)
+            {
+                iconFlechaArbMouseClicked(evt);
+            }
+        });
 
         marcoBarraRuta.setBackground(new java.awt.Color(204, 204, 204));
 
@@ -356,16 +363,35 @@ public class VentanaPrincipal extends javax.swing.JFrame
         p.setVisible(true);
     }//GEN-LAST:event_iconPacientMouseClicked
 
+    private void iconFlechaArbMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_iconFlechaArbMouseClicked
+    {//GEN-HEADEREND:event_iconFlechaArbMouseClicked
+        subir();
+    }//GEN-LAST:event_iconFlechaArbMouseClicked
+
     private void manejarDbClick(int fila)
     {
-        String selDir = tbDatos.getValueAt(tbDatos.getSelectedRow(), 1).toString();
+        String selDir = tbDatos.getValueAt(tbDatos.getSelectedRow(), 2).toString();
         NodoM seleccionado = Var.getM().busca2(Var.getM().getR(), 0, Manipula.dividirCad(txtRuta.getText() + selDir), selDir);
-        if (seleccionado != null)
+        if (seleccionado != null && seleccionado.getAbajo() != null)
         {
             txtRuta.setText(txtRuta.getText() + selDir + "/");
             NodoM abj = seleccionado.getAbajo();
             DefaultTableModel modelo = Manipula.actualizarTabla(abj);
             tbDatos.setModel(modelo);
+
+            if (abj != null && abj.getObj() instanceof Dependencia)
+            {
+                ManipulaTablas.personalizarTabla(tbDatos, "Dependencia");
+            } else if (abj != null && abj.getObj() instanceof Hospital)
+            {
+                ManipulaTablas.personalizarTabla(tbDatos, "Hospital");
+            } else if (abj != null && abj.getObj() instanceof Especialidad)
+            {
+                ManipulaTablas.personalizarTabla(tbDatos, "Especialidad");
+            } else if (abj != null && abj.getObj() instanceof Paciente)
+            {
+                ManipulaTablas.personalizarTabla(tbDatos, "Paciente");
+            }
         }
     }
 
@@ -415,6 +441,59 @@ public class VentanaPrincipal extends javax.swing.JFrame
         iconSel = icon;
         popuMenu.show(e.getComponent(), e.getX(), e.getY());
     }
+
+    private void subir()
+    {
+        if (!txtRuta.getText().isBlank())
+        {
+            String[] arr = Manipula.dividirCad(txtRuta.getText());
+            if (arr.length > 0)
+            {
+                NodoM anterior = Var.getM().busca2(Var.getM().getR(), 0, arr, arr[arr.length - 1]);
+                anterior = (anterior.getArriba() != null) ? anterior.getArriba().getAbajo() : Var.getM().getR();
+
+                String ruta = txtRuta.getText();
+                if (ruta.endsWith("/"))
+                {
+                    ruta = ruta.substring(0, ruta.length() - 1);
+                }
+
+                int lastSlash = ruta.lastIndexOf("/");
+                if (lastSlash != -1)
+                {
+                    ruta = ruta.substring(0, lastSlash + 1);
+                } else
+                {
+                    ruta = ""; // Ya estamos en raíz
+                }
+                txtRuta.setText(ruta);
+                
+                DefaultTableModel modelo = Manipula.actualizarTabla(anterior);
+                tbDatos.setModel(modelo);
+
+                if (anterior != null)
+                {
+
+                    Object obj = anterior.getObj();
+                    if (obj instanceof Dependencia)
+                    {
+                        ManipulaTablas.personalizarTabla(tbDatos, "Dependencia");
+                    } else if (obj instanceof Hospital )
+                    {
+                        ManipulaTablas.personalizarTabla(tbDatos, "Hospital");
+                    } else if (obj instanceof Especialidad )
+                    {
+                        ManipulaTablas.personalizarTabla(tbDatos, "Especialidad");
+                    } else if (obj instanceof Paciente )
+                    {
+                        ManipulaTablas.personalizarTabla(tbDatos, "Paciente");
+                    }
+
+                }
+            }
+        }
+    }
+    
 
     private void ejecutarAccion(String accion)
     {
@@ -492,5 +571,17 @@ public class VentanaPrincipal extends javax.swing.JFrame
     {
         this.tbDatos = tbDatos;
     }
+
+    public javax.swing.JTextField getTxtRuta()
+    {
+        return txtRuta;
+    }
+
+    public void setTxtRuta(javax.swing.JTextField txtRuta)
+    {
+        this.txtRuta = txtRuta;
+    }
+    
+    
 
 }
