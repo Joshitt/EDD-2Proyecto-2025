@@ -47,6 +47,24 @@ public class Manipula
             e.printStackTrace();
         }
     }
+    
+    public static <T> void eliminar(String[] ruta)
+    {
+        try
+        {
+            Multilista m = Var.getM();
+            NodoM[]arr=new NodoM[2];// arr[0] es el nodo eliminado, arr[1] es la nueva raíz del nivel
+            m.elimina(m.getR(), arr, ruta, 0);
+            m.setR(arr[1]);
+            
+        } catch (Exception e)
+        {
+            JOptionPane.showMessageDialog(null, "Error al eliminar en la multilista", "Error", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+    }
+    
+    
 
     public static String formatoPalabras(String palabra)
     {

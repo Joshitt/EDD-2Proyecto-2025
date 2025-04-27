@@ -22,7 +22,7 @@ public class VentanaPrincipal extends javax.swing.JFrame
 {
 
     private JPopupMenu popuMenu;
-    private JMenuItem itemCrear, itemModificar, itemEliminar, itemConsultar;
+    private JMenuItem itemModificar, itemEliminar, itemRemodelar, itemFinRemodelacion, itemSubirNivel, itemBajarNivel;
     private JLabel iconSel = null;
 
     /**
@@ -35,12 +35,8 @@ public class VentanaPrincipal extends javax.swing.JFrame
         tbDatos.setModel(Manipula.actualizarTabla(Var.getM().getR()));
         ManipulaTablas.personalizarTabla(tbDatos, "Dependendencia");
 
-        /*
         crearMenuOpc();
-        iconDependencia.addMouseListener(mouseIcon);
-        iconHospital.addMouseListener(mouseIcon);
-        iconEspecialidad.addMouseListener(mouseIcon);
-        iconPaciente.addMouseListener(mouseIcon);*/
+
     }
 
     /**
@@ -263,6 +259,10 @@ public class VentanaPrincipal extends javax.swing.JFrame
             {
                 tbDatosMouseClicked(evt);
             }
+            public void mousePressed(java.awt.event.MouseEvent evt)
+            {
+                tbDatosMousePressed(evt);
+            }
         });
         jScrollPane1.setViewportView(tbDatos);
 
@@ -368,6 +368,114 @@ public class VentanaPrincipal extends javax.swing.JFrame
         subir();
     }//GEN-LAST:event_iconFlechaArbMouseClicked
 
+    private void tbDatosMousePressed(java.awt.event.MouseEvent evt)//GEN-FIRST:event_tbDatosMousePressed
+    {//GEN-HEADEREND:event_tbDatosMousePressed
+        if (SwingUtilities.isRightMouseButton(evt))
+        {
+            int fila = tbDatos.rowAtPoint(evt.getPoint());
+            tbDatos.setRowSelectionInterval(fila, fila);
+
+            String tipo = obtenerTipo(fila);
+
+            popuMenu.removeAll();
+
+            popuMenu.add(itemEliminar);
+            popuMenu.add(itemModificar);
+
+            if ("Hospital".equals(tipo))
+            {
+                popuMenu.addSeparator();
+                popuMenu.add(itemRemodelar);
+                popuMenu.add(itemFinRemodelacion);
+                popuMenu.add(itemSubirNivel);
+                popuMenu.add(itemBajarNivel);
+            }
+            popuMenu.show(tbDatos, evt.getX(), evt.getY());
+        }
+    }//GEN-LAST:event_tbDatosMousePressed
+
+    private void crearMenuOpc()
+    {
+        popuMenu = new JPopupMenu();
+
+        itemEliminar = new JMenuItem("Eliminar");
+        itemModificar = new JMenuItem("Modificar");
+
+        itemRemodelar = new JMenuItem("Remodelar");
+        itemFinRemodelacion = new JMenuItem("Terminar Remodelacion");
+        itemSubirNivel = new JMenuItem("Subir a nivel 3");
+        itemBajarNivel = new JMenuItem("Bajar de nivel 3");
+
+        itemEliminar.addActionListener(e -> eliminar());
+        itemModificar.addActionListener(e -> modificar());
+        itemRemodelar.addActionListener(e -> remodelarHospital());
+        itemFinRemodelacion.addActionListener(e -> terminarRemodelacion());
+        itemSubirNivel.addActionListener(e -> subirNivelHospital());
+        itemBajarNivel.addActionListener(e -> bajarNivelHospital());
+
+    }
+
+    private void mostrarMenu(MouseEvent e, JLabel icon)
+    {
+        popuMenu.show(e.getComponent(), e.getX(), e.getY());
+    }
+
+    private String obtenerTipo(int fila)
+    {
+        String selDir = tbDatos.getValueAt(tbDatos.getSelectedRow(), 2).toString();
+        NodoM seleccionado = Var.getM().busca2(Var.getM().getR(), 0, Manipula.dividirCad(txtRuta.getText() + selDir), selDir);
+        if (seleccionado != null && seleccionado.getObj() != null)
+        {
+            if (seleccionado != null && seleccionado.getObj() instanceof Dependencia)
+            {
+                return "Dependencia";
+            } else if (seleccionado != null && seleccionado.getObj() instanceof Hospital)
+            {
+                return "Hospital";
+            } else if (seleccionado != null && seleccionado.getObj() instanceof Especialidad)
+            {
+                return "Especialidad";
+            } else if (seleccionado != null && seleccionado.getObj() instanceof Paciente)
+            {
+                return "Paciente";
+            }
+        }
+        return "";
+    }
+
+    private void eliminar()
+    {
+        System.out.println("eliminar seleccionado ");
+        
+    }
+
+    private void modificar()
+    {
+        System.out.println("Modificar seleccionado");
+        
+    }
+
+    private void remodelarHospital()
+    {
+        System.out.println("Remodelar hospital seleccionado");
+        
+    }
+
+    private void terminarRemodelacion()
+    {
+        System.out.println("Finalizar remodelacion seleccionado");
+    }
+
+    private void subirNivelHospital()
+    {
+        System.out.println("Subir a nivel 3 seleccionado");
+    }
+
+    private void bajarNivelHospital()
+    {
+        System.out.println("Bajar de nivel 3 seleccionado");
+    }
+
     private void manejarDbClick(int fila)
     {
         String selDir = tbDatos.getValueAt(tbDatos.getSelectedRow(), 2).toString();
@@ -404,44 +512,6 @@ public class VentanaPrincipal extends javax.swing.JFrame
         tbDatos.setModel(modelo);
     }
 
-    private void crearMenuOpc()
-    {
-        popuMenu = new JPopupMenu();
-
-        itemCrear = new JMenu("Crear");
-        itemEliminar = new JMenu("Eliminar");
-        itemModificar = new JMenu("Modificar");
-        itemConsultar = new JMenu("Consultar");
-
-        popuMenu.add(itemCrear);
-        popuMenu.add(itemEliminar);
-        popuMenu.add(itemModificar);
-        popuMenu.add(itemConsultar);
-
-        itemCrear.addActionListener(e -> ejecutarAccion("Crear"));
-        itemEliminar.addActionListener(e -> ejecutarAccion("Eliminar"));
-        itemModificar.addActionListener(e -> ejecutarAccion("Modificar"));
-        itemConsultar.addActionListener(e -> ejecutarAccion("Consultar"));
-    }
-    private MouseListener mouseIcon = new MouseAdapter()
-    {
-        @Override
-        public void mousePressed(MouseEvent e)
-        {
-            if (SwingUtilities.isLeftMouseButton(e))
-            {
-                JLabel icon = (JLabel) e.getSource();
-                mostrarMenu(e, icon);
-            }
-        }
-    };
-
-    private void mostrarMenu(MouseEvent e, JLabel icon)
-    {
-        iconSel = icon;
-        popuMenu.show(e.getComponent(), e.getX(), e.getY());
-    }
-
     private void subir()
     {
         if (!txtRuta.getText().isBlank())
@@ -467,7 +537,7 @@ public class VentanaPrincipal extends javax.swing.JFrame
                     ruta = ""; // Ya estamos en raíz
                 }
                 txtRuta.setText(ruta);
-                
+
                 DefaultTableModel modelo = Manipula.actualizarTabla(anterior);
                 tbDatos.setModel(modelo);
 
@@ -478,13 +548,13 @@ public class VentanaPrincipal extends javax.swing.JFrame
                     if (obj instanceof Dependencia)
                     {
                         ManipulaTablas.personalizarTabla(tbDatos, "Dependencia");
-                    } else if (obj instanceof Hospital )
+                    } else if (obj instanceof Hospital)
                     {
                         ManipulaTablas.personalizarTabla(tbDatos, "Hospital");
-                    } else if (obj instanceof Especialidad )
+                    } else if (obj instanceof Especialidad)
                     {
                         ManipulaTablas.personalizarTabla(tbDatos, "Especialidad");
-                    } else if (obj instanceof Paciente )
+                    } else if (obj instanceof Paciente)
                     {
                         ManipulaTablas.personalizarTabla(tbDatos, "Paciente");
                     }
@@ -493,7 +563,6 @@ public class VentanaPrincipal extends javax.swing.JFrame
             }
         }
     }
-    
 
     private void ejecutarAccion(String accion)
     {
@@ -581,7 +650,5 @@ public class VentanaPrincipal extends javax.swing.JFrame
     {
         this.txtRuta = txtRuta;
     }
-    
-    
 
 }

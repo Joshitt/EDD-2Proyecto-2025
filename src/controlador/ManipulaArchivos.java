@@ -10,6 +10,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.List;
 import javax.swing.JOptionPane;
 
 /**
@@ -73,7 +74,6 @@ public class ManipulaArchivos
         }
     }
 
-    
     public static int cargarContador(String nombreArchivo)
     {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(RUTA + nombreArchivo)))
