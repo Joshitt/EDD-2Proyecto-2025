@@ -47,24 +47,22 @@ public class Manipula
             e.printStackTrace();
         }
     }
-    
+
     public static <T> void eliminar(String[] ruta)
     {
         try
         {
             Multilista m = Var.getM();
-            NodoM[]arr=new NodoM[2];// arr[0] es el nodo eliminado, arr[1] es la nueva raíz del nivel
+            NodoM[] arr = new NodoM[2];// arr[0] es el nodo eliminado, arr[1] es la nueva raíz del nivel
             m.elimina(m.getR(), arr, ruta, 0);
             m.setR(arr[1]);
-            
+
         } catch (Exception e)
         {
             JOptionPane.showMessageDialog(null, "Error al eliminar en la multilista", "Error", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
-    
-    
 
     public static String formatoPalabras(String palabra)
     {
@@ -93,7 +91,7 @@ public class Manipula
         }
     }
 
-    public  static String construirRutaDesdeNodo(NodoM nodo)
+    public static String construirRutaDesdeNodo(NodoM nodo)
     {
         StringBuilder ruta = new StringBuilder();
         while (nodo != null)
@@ -346,6 +344,39 @@ public class Manipula
             return modelo;
         }
         return new DefaultTableModel();
+    }
+
+    public static void actualizarYPersonalizar(NodoM nodo, JTable tabla)
+    {
+        if (nodo == null)
+        {
+            DefaultTableModel modelo = new DefaultTableModel();
+            modelo.setColumnIdentifiers(new String[]
+            {
+                "", "", ""
+            });
+            tabla.setModel(modelo);
+            return;
+        }
+
+        DefaultTableModel modelo = actualizarTabla(nodo);
+        tabla.setModel(modelo);
+
+        // Personaliza la tabla según el tipo de objeto
+        if (nodo.getObj() instanceof Dependencia)
+        {
+            ManipulaTablas.personalizarTabla(tabla, "Dependencia");
+        } else if (nodo.getObj() instanceof Hospital)
+        {
+            ManipulaTablas.personalizarTabla(tabla, "Hospital");
+        } else if (nodo.getObj() instanceof Especialidad)
+        {
+            ManipulaTablas.personalizarTabla(tabla, "Especialidad");
+        } else if (nodo.getObj() instanceof Paciente)
+        {
+            ManipulaTablas.personalizarTabla(tabla, "Paciente");
+        }
+
     }
 
     public static String[] dividirCad(String nuevaRuta)

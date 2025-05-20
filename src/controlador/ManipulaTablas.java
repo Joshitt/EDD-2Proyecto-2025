@@ -38,8 +38,6 @@ public class ManipulaTablas extends JTable
         // Se ajusta el renderizado para evitar el borde de enfoque
         TableCellRenderer noFocusBorderRenderer = new NoFocusBorderTableCellRenderer();
         tabla.setDefaultRenderer(Object.class, noFocusBorderRenderer);
-
-        // Asegúrate de que la tabla tiene columnas
         if (tabla.getColumnCount() > 0)
         {
             // Si la primera columna es un ícono (suponiendo que la primera columna es de tipo " ")

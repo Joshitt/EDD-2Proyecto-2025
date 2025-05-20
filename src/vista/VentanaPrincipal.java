@@ -445,20 +445,143 @@ public class VentanaPrincipal extends javax.swing.JFrame
 
     private void eliminar()
     {
-        System.out.println("eliminar seleccionado ");
-        
+
+        System.out.println("******************************************eliminar seleccionado *****************************************");
+        int fila = tbDatos.getSelectedRow();
+        if (fila >= 0)
+        {
+            System.out.println("*********************************sin eliminar*************************");
+            System.out.println(Var.getM().desplegar(Var.getM().getR(), ""));
+            String nombre = tbDatos.getValueAt(fila, 2).toString();//elige el dato de la tabla a eliminaer
+            System.out.println("seleccionado: " + nombre);
+            String rutaTexto = txtRuta.getText();//ruta actual
+            System.out.println("ruta: " + rutaTexto);
+
+            //genera un vector de cadenas que incluye el nombre para pasarlo al metodo que ocupa el nombre
+            String[] ruta = Manipula.dividirCad(rutaTexto + nombre);
+            //genera un vector de cadena para buscar el padre de ese nodo ,solo para imprimir los datos que tiene ABJ
+            String[] rutaDato = Manipula.dividirCad(rutaTexto);
+
+            NodoM nodoEliminar = Var.getM().buscarRuta(Var.getM().getR(), rutaDato, 0);
+            if (nodoEliminar != null)
+            {
+                System.out.println("eliminado=" + nodoEliminar.getEt());
+                NodoM nodoArb = nodoEliminar.getArriba();
+                Manipula.eliminar(ruta);
+
+                if (nodoArb != null)
+                {
+                    System.out.println("eliminadoARB=" + nodoArb.getEt());
+                    if (nodoArb.getAbajo() != null)
+                    {
+                        Manipula.actualizarYPersonalizar(nodoArb.getAbajo(), tbDatos);
+                        //txtRuta.setText(rutaTexto);
+                    } else
+                    {
+                        if (rutaTexto.endsWith("/"))
+                        {
+                            rutaTexto = rutaTexto.substring(0, rutaTexto.length() - 1);
+                        }
+                        int ultimoSlash = rutaTexto.lastIndexOf("/");
+                        if (ultimoSlash != -1)
+                        {
+                            rutaTexto = rutaTexto.substring(0, ultimoSlash + 1); // incluir el slash final
+                        } else
+                        {
+                            rutaTexto = ""; // raíz
+                        }
+
+                        nodoArb = nodoArb.getArriba();
+                        if (nodoArb != null)
+                        {
+                            Manipula.actualizarYPersonalizar(nodoArb.getAbajo(), tbDatos);
+                        } else
+                        {
+                            Manipula.actualizarYPersonalizar(Var.getM().getR(), tbDatos);
+                        }
+                        txtRuta.setText(rutaTexto);
+                    }
+                } else
+                {
+                    System.out.println("***************nivel mas alto");
+                    Manipula.actualizarYPersonalizar(Var.getM().getR(), tbDatos);
+                    txtRuta.setText("");
+                }
+                System.out.println("*********************************DATO ELIMINADO*************************");
+
+                ManipulaArchivos.guardar(Var.getM(), "datos.dat");
+                ManipulaArchivos.guardarContador(Datos.getContadorGeneral(), "contador.dat");
+                System.out.println(Var.getM().desplegar(Var.getM().getR(), ""));
+            } else
+            {
+                JOptionPane.showMessageDialog(null, "no se encontro el nodo ");
+            }
+        } else
+        {
+            JOptionPane.showMessageDialog(null, "Seleccione un elemento para eliminar.");
+        }
     }
 
     private void modificar()
     {
         System.out.println("Modificar seleccionado");
-        
+        int fila = tbDatos.getSelectedRow();
+        if (fila >= 0)
+        {
+            String seleccionado = tbDatos.getValueAt(fila, 2).toString();
+            String rutaTxt = txtRuta.getText();
+            System.out.println("Fila seleccionada: " + fila);
+            System.out.println("Valor seleccionado: " + seleccionado);
+            
+            if (!rutaTxt.endsWith("/"))
+            {
+                rutaTxt+="/";
+            }
+
+            String[] ruta = Manipula.dividirCad(rutaTxt);
+            NodoM nodoPadre = Var.getM().buscarRuta(Var.getM().getR(), ruta, 0);
+            NodoM nodoModificar = Var.getM().buscaAux(nodoPadre, seleccionado);
+            System.out.println("*************"+nodoModificar.getEt());
+            if (nodoModificar != null)
+            {
+                Object obj = nodoModificar.getObj();
+                if (obj instanceof Datos datos)
+                {
+                    String clave = datos.getClave();
+                    String nombre = datos.getNombre();
+                    if (obj instanceof Dependencia dep)
+                    {
+                        System.out.println("abrinedo vtn mod dep");
+                        new VentanaCrearDep(this, rootPaneCheckingEnabled, this, rutaTxt, dep).setVisible(true);
+                        
+                    } else if (obj instanceof Hospital hos)
+                    {
+                        new VentanaCrearHos(this, rootPaneCheckingEnabled, this, rutaTxt, hos, nodoModificar).setVisible(true);
+
+                    } else if (obj instanceof Especialidad esp)
+                    {
+                        new VentanaCrearEsp(this, rootPaneCheckingEnabled, this, rutaTxt, esp, nodoModificar).setVisible(true);
+
+                    } else if (obj instanceof Paciente pac)
+                    {
+                        new VentanaCrearPac(this, rootPaneCheckingEnabled, this, rutaTxt, pac, nodoModificar).setVisible(true);
+
+                    }
+                }
+            } else
+            {
+            }
+
+        } else
+        {
+        }
+
     }
 
     private void remodelarHospital()
     {
         System.out.println("Remodelar hospital seleccionado");
-        
+
     }
 
     private void terminarRemodelacion()
@@ -484,22 +607,7 @@ public class VentanaPrincipal extends javax.swing.JFrame
         {
             txtRuta.setText(txtRuta.getText() + selDir + "/");
             NodoM abj = seleccionado.getAbajo();
-            DefaultTableModel modelo = Manipula.actualizarTabla(abj);
-            tbDatos.setModel(modelo);
-
-            if (abj != null && abj.getObj() instanceof Dependencia)
-            {
-                ManipulaTablas.personalizarTabla(tbDatos, "Dependencia");
-            } else if (abj != null && abj.getObj() instanceof Hospital)
-            {
-                ManipulaTablas.personalizarTabla(tbDatos, "Hospital");
-            } else if (abj != null && abj.getObj() instanceof Especialidad)
-            {
-                ManipulaTablas.personalizarTabla(tbDatos, "Especialidad");
-            } else if (abj != null && abj.getObj() instanceof Paciente)
-            {
-                ManipulaTablas.personalizarTabla(tbDatos, "Paciente");
-            }
+            Manipula.actualizarYPersonalizar(abj, tbDatos);
         }
     }
 

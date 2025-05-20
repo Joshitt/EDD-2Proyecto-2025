@@ -32,10 +32,22 @@ public class Especialidad extends Datos implements Serializable
     {
         return numeroMedicos;
     }
+    
+    
 
     @Override
     public String toString()
     {
         return super.toString()+ "camas: " + numeroCamas+ "medicos: " + numeroMedicos;
+    }
+
+    public void setNumeroCamas(int numeroCamas)
+    {
+        this.numeroCamas = numeroCamas;
+    }
+
+    public void setNumeroMedicos(int numeroMedicos)
+    {
+        this.numeroMedicos = numeroMedicos;
     }
 }
