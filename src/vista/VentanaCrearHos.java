@@ -25,6 +25,7 @@ public class VentanaCrearHos extends javax.swing.JDialog
      */
     private VentanaPrincipal principal;
     private String rutaActual;
+    private Hospital hospitalModificar;
 
     public VentanaCrearHos(java.awt.Frame parent, boolean modal, VentanaPrincipal principal, String rutaActual)
     {
@@ -38,6 +39,37 @@ public class VentanaCrearHos extends javax.swing.JDialog
 
         llenarComboDependencias(JCDependencia, Var.getM().getR());
 
+    }
+
+    public VentanaCrearHos(java.awt.Frame parent, boolean modal, VentanaPrincipal principal, String rutaActual, Hospital hos, NodoM nodoModificar)
+    {
+        super(parent, modal);
+        this.principal = principal;
+        this.rutaActual = rutaActual;
+        this.hospitalModificar = hos;
+        initComponents();
+        setTitle("Modificar Hospital");
+        setLocationRelativeTo(null);
+
+        txtClave.setText(hos.getClave());
+        txtClave.setEnabled(false);
+
+        txtNombre.setText(hos.getNombre());
+        txtNombre.setEnabled(false);
+
+        llenarComboDependencias(JCDependencia, Var.getM().getR());
+        NodoM nodoDep = nodoModificar.getArriba();
+        
+        txtDireccion.setText(hos.getDireccion());
+        JCNivel1.setSelectedItem(hos.getNivel());
+
+        Dependencia dep = null;
+        if (nodoDep != null && nodoDep.getObj() instanceof Dependencia)
+        {
+            dep = (Dependencia) nodoDep.getObj();
+        }
+        JCDependencia.setSelectedItem(dep.getNombre());
+        JCDependencia.setEnabled(false);
     }
 
     /**
@@ -392,8 +424,11 @@ public class VentanaCrearHos extends javax.swing.JDialog
 
     private void txtNombreMousePressed(java.awt.event.MouseEvent evt)//GEN-FIRST:event_txtNombreMousePressed
     {//GEN-HEADEREND:event_txtNombreMousePressed
-        txtNombre.setText("");
-        txtNombre.setForeground(Color.black);
+        if (txtNombre.isEnabled())
+        {
+            txtNombre.setText("");
+            txtNombre.setForeground(Color.black);
+        }
     }//GEN-LAST:event_txtNombreMousePressed
 
     private void txtNombreActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtNombreActionPerformed
@@ -468,12 +503,21 @@ public class VentanaCrearHos extends javax.swing.JDialog
             String direccion = Manipula.formatoPalabras(txtDireccion.getText());
             String nivel = (String) JCNivel1.getSelectedItem();
             String dependencia = (String) JCDependencia.getSelectedItem();
-            Hospital h = new Hospital(nivel, direccion, nombre);
 
             String[] ruta = new String[2];
             ruta[0] = dependencia;
             ruta[1] = nombre;
-            Manipula.insertar(h, nombre, ruta);
+            if (hospitalModificar == null)
+            {
+
+                Hospital h = new Hospital(nivel, direccion, nombre);
+                Manipula.insertar(h, nombre, ruta);
+                ManipulaArchivos.guardarContador(Datos.getContadorGeneral(), "contador.dat");
+            } else
+            {
+                hospitalModificar.setDireccion(direccion);
+                hospitalModificar.setNivel(nivel);
+            }
 
             //NodoM nodo = Var.getM().buscarRuta(Var.getM().getR(), ruta, 0);
             //NodoM nodo = Var.getM().getR();
@@ -481,14 +525,13 @@ public class VentanaCrearHos extends javax.swing.JDialog
             //NodoM nodoHospital = Var.getM().busca(nodo.getAbajo(), ruta[1]);
             principal.getTxtRuta().setText(Manipula.construirRutaDesdeNodo(nodo));
             DefaultTableModel modelo = Manipula.actualizarTabla(nodo.getAbajo());
-            
+
             System.out.println(Var.getM().desplegar(Var.getM().getR(), ""));
 
             principal.getTbDatos().setModel(modelo);
             ManipulaTablas.personalizarTabla(principal.getTbDatos(), "Hospital");
 
             ManipulaArchivos.guardar(Var.getM(), "datos.dat");
-            ManipulaArchivos.guardarContador(Datos.getContadorGeneral(), "contador.dat");
 
             VentanaCrearHos.this.dispose();
             //JOptionPane.showMessageDialog(this, "Dependencia guardada");

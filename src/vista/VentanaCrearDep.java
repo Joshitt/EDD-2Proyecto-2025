@@ -24,6 +24,7 @@ public class VentanaCrearDep extends javax.swing.JDialog
      */
     private VentanaPrincipal principal;
     private String rutaActual;
+    private Dependencia dependenciaModificar;
 
     public VentanaCrearDep(java.awt.Frame parent, boolean modal, VentanaPrincipal principal, String rutaActual)
     {
@@ -34,6 +35,26 @@ public class VentanaCrearDep extends javax.swing.JDialog
 
         String claveTemporal = String.format("D.%03d", Datos.getContadorGeneral() + 1);
         txtClave.setText(claveTemporal);
+    }
+
+    // Constructor para modificar
+    public VentanaCrearDep(java.awt.Frame parent, boolean modal, VentanaPrincipal principal, String rutaActual, Dependencia dep)
+    {
+        super(parent, modal);
+        this.principal = principal;
+        this.rutaActual = rutaActual;
+        this.dependenciaModificar = dep;
+        initComponents();
+
+        setTitle("Modificar Dependencia");
+        setLocationRelativeTo(null);
+        txtClave.setText(dep.getClave());
+        txtClave.setEnabled(false);
+
+        txtNombre.setText(dep.getNombre());
+        txtNombre.setEnabled(false);
+
+        JCTipo.setSelectedItem(dep.getTipo());
     }
 
     /**
@@ -298,8 +319,11 @@ public class VentanaCrearDep extends javax.swing.JDialog
 
     private void txtNombreMousePressed(java.awt.event.MouseEvent evt)//GEN-FIRST:event_txtNombreMousePressed
     {//GEN-HEADEREND:event_txtNombreMousePressed
-        txtNombre.setText("");
-        txtNombre.setForeground(Color.black);
+        if (txtNombre.isEnabled())
+        {
+            txtNombre.setText("");
+            txtNombre.setForeground(Color.black);
+        }
     }//GEN-LAST:event_txtNombreMousePressed
 
     private void btnGuardarMouseClicked(java.awt.event.MouseEvent evt)//GEN-FIRST:event_btnGuardarMouseClicked
@@ -367,30 +391,35 @@ public class VentanaCrearDep extends javax.swing.JDialog
 //            }
 //        });
 //    }
-
     private void nuevo()
     {
         if (camposValidados())
         {
             String nombre = Manipula.formatoPalabras(txtNombre.getText());
             String tipo = (String) JCTipo.getSelectedItem();
-            Dependencia d = new Dependencia(tipo, nombre);
 
-            String[] ruta = new String[0];
-            Manipula.insertar(d, nombre, ruta);
-            
-            //NodoM nodo = Var.getM().buscarRuta(Var.getM().getR(), ruta, 0);
+            if (dependenciaModificar == null)
+            {
+                Dependencia d = new Dependencia(tipo, nombre);
+
+                String[] ruta = new String[0];
+                Manipula.insertar(d, nombre, ruta);
+
+                //NodoM nodo = Var.getM().buscarRuta(Var.getM().getR(), ruta, 0);
+                ManipulaArchivos.guardarContador(Datos.getContadorGeneral(), "contador.dat");
+                //JOptionPane.showMessageDialog(this, "Dependencia guardada");
+
+            } else
+            {
+                dependenciaModificar.setTipo(tipo);
+            }
             NodoM nodo = Var.getM().getR();
             DefaultTableModel modelo = Manipula.actualizarTabla(nodo);
             principal.getTbDatos().setModel(modelo);
             ManipulaTablas.personalizarTabla(principal.getTbDatos(), "Dependencia");
 
-
             ManipulaArchivos.guardar(Var.getM(), "datos.dat");
-            ManipulaArchivos.guardarContador(Datos.getContadorGeneral(), "contador.dat");
-            
             VentanaCrearDep.this.dispose();
-            //JOptionPane.showMessageDialog(this, "Dependencia guardada");
         } else
         {
             JOptionPane.showMessageDialog(this, "Completa todos los campos correctamente", "Error", JOptionPane.ERROR_MESSAGE);

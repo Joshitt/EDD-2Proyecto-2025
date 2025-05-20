@@ -30,6 +30,7 @@ public class VentanaCrearPac extends javax.swing.JDialog
      */
     private VentanaPrincipal principal;
     private String rutaActual;
+    private Paciente modificarPaciente;
 
     public VentanaCrearPac(java.awt.Frame parent, boolean modal, VentanaPrincipal principal, String rutaActual)
     {
@@ -51,6 +52,77 @@ public class VentanaCrearPac extends javax.swing.JDialog
         {
             agregarEspecialidades(JCDependencia, JCHospital1, JCEspecialidad, Var.getM().getR());
         });
+
+    }
+
+    public VentanaCrearPac(java.awt.Frame parent, boolean modal, VentanaPrincipal principal, String rutaActual, Paciente pac, NodoM nodoModificar)
+    {
+        super(parent, modal);
+        this.principal = principal;
+        this.rutaActual = rutaActual;
+        this.modificarPaciente = pac;
+        initComponents();
+        setTitle("Modificar Paciente");
+        setLocationRelativeTo(null);
+
+        txtClave.setText(pac.getClave());
+        txtClave.setEnabled(false);
+
+        txtNombre1.setText(pac.getNombre());
+        txtNombre1.setEnabled(false);
+
+        if (pac.getVigencia() != null)
+        {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            txtFormatoFecha.setText(pac.getVigencia().format(formatter));
+        } else
+        {
+            txtFormatoFecha.setText("");
+        }
+
+        //txtFormatoFecha.setText(pac.getVigencia().toString());
+        jCEstatus.setSelectedItem(pac.getStatus());
+        jCSexo.setSelectedItem(pac.getSexo());
+
+        llenarComboDependencias(JCDependencia, Var.getM().getR());
+        JCDependencia.addActionListener(e ->
+        {
+            agregarHospitales(JCDependencia, JCHospital1, Var.getM().getR());
+        });
+
+        JCHospital1.addActionListener(e ->
+        {
+            agregarEspecialidades(JCDependencia, JCHospital1, JCEspecialidad, Var.getM().getR());
+        });
+
+        NodoM nodoEsp = nodoModificar.getArriba();
+        NodoM nodoHos = nodoEsp.getArriba();
+        NodoM nodoDep = nodoHos.getArriba();
+
+        Dependencia dep = null;
+        Hospital hos = null;
+        Especialidad esp = null;
+
+        if (nodoDep != null && nodoDep.getObj() instanceof Dependencia)
+        {
+            dep = (Dependencia) nodoDep.getObj();
+        }
+        if (nodoHos != null && nodoHos.getObj() instanceof Hospital)
+        {
+            hos = (Hospital) nodoHos.getObj();
+        }
+        if (nodoEsp != null && nodoEsp.getObj() instanceof Especialidad)
+        {
+            esp = (Especialidad) nodoEsp.getObj();
+        }
+
+        JCDependencia.setSelectedItem(dep.getNombre());
+        JCHospital1.setSelectedItem(hos.getNombre());
+        JCEspecialidad.setSelectedItem(esp.getNombre());
+
+        JCDependencia.setEnabled(false);
+        JCHospital1.setEnabled(false);
+        JCEspecialidad.setEnabled(false);
 
     }
 
@@ -159,7 +231,7 @@ public class VentanaCrearPac extends javax.swing.JDialog
 
         jSeparator1.setBackground(new java.awt.Color(0, 0, 0));
         jSeparator1.setForeground(new java.awt.Color(0, 0, 0));
-        bg.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 120, 57, -1));
+        bg.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(7, 120, 70, 20));
 
         bgAbj.setBackground(new java.awt.Color(102, 153, 255));
 
@@ -299,7 +371,7 @@ public class VentanaCrearPac extends javax.swing.JDialog
                 txtFormatoFechaKeyTyped(evt);
             }
         });
-        bg.add(txtFormatoFecha, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 100, 60, 20));
+        bg.add(txtFormatoFecha, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 100, 70, 20));
 
         jSeparator5.setBackground(new java.awt.Color(0, 0, 0));
         jSeparator5.setForeground(new java.awt.Color(0, 0, 0));
@@ -399,7 +471,7 @@ public class VentanaCrearPac extends javax.swing.JDialog
     {//GEN-HEADEREND:event_btnGuardarMouseClicked
         //JOptionPane.showMessageDialog(this, "correcto");
         nuevo();
-        
+
     }//GEN-LAST:event_btnGuardarMouseClicked
 
     private void JCDependenciaActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_JCDependenciaActionPerformed
@@ -438,8 +510,12 @@ public class VentanaCrearPac extends javax.swing.JDialog
 
     private void txtNombre1MousePressed(java.awt.event.MouseEvent evt)//GEN-FIRST:event_txtNombre1MousePressed
     {//GEN-HEADEREND:event_txtNombre1MousePressed
-        txtNombre1.setText("");
-        txtNombre1.setForeground(Color.black);
+
+        if (txtNombre1.isEnabled())
+        {
+            txtNombre1.setText("");
+            txtNombre1.setForeground(Color.black);
+        }
     }//GEN-LAST:event_txtNombre1MousePressed
 
     private void txtNombre1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtNombre1ActionPerformed
@@ -526,33 +602,39 @@ public class VentanaCrearPac extends javax.swing.JDialog
 
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
             LocalDate fechaVigencia = LocalDate.parse(txtFormatoFecha.getText().trim(), formatter);
-            Paciente p = new Paciente(sexo, estatus, fechaVigencia, nombre);
 
             String[] ruta = new String[4];
             ruta[0] = dependencia;
             ruta[1] = hospital;
             ruta[2] = especialidad;
             ruta[3] = nombre;
-            Manipula.insertar(p, nombre, ruta);
+            if (modificarPaciente == null)
+            {
+                Paciente p = new Paciente(sexo, estatus, fechaVigencia, nombre);
+
+                Manipula.insertar(p, nombre, ruta);
+                ManipulaArchivos.guardarContador(Datos.getContadorGeneral(), "contador.dat");
+            } else
+            {
+                modificarPaciente.setSexo(sexo);
+                modificarPaciente.setStatus(estatus);
+                modificarPaciente.setVigencia(fechaVigencia);
+            }
 
             NodoM nodo = Var.getM().busca(Var.getM().getR(), ruta[0]);
             NodoM nodoHospital = Var.getM().busca(nodo.getAbajo(), ruta[1]);
             NodoM nodoEspecialidad = Var.getM().busca(nodoHospital.getAbajo(), ruta[2]);
             //NodoM nodoPaciente = Var.getM().busca(nodoEspecialidad.getAbajo(), ruta[3]);
 
-            principal.getTxtRuta().setText(Manipula.construirRutaDesdeNodo(nodoEspecialidad));  
+            principal.getTxtRuta().setText(Manipula.construirRutaDesdeNodo(nodoEspecialidad));
             DefaultTableModel modelo = Manipula.actualizarTabla(nodoEspecialidad.getAbajo());
 
             System.out.println(Var.getM().desplegar(Var.getM().getR(), ""));
 
             principal.getTbDatos().setModel(modelo);
             ManipulaTablas.personalizarTabla(principal.getTbDatos(), "Paciente");
-            
-            
-            
 
             ManipulaArchivos.guardar(Var.getM(), "datos.dat");
-            ManipulaArchivos.guardarContador(Datos.getContadorGeneral(), "contador.dat");
 
             VentanaCrearPac.this.dispose();
             //JOptionPane.showMessageDialog(this, "Dependencia guardada");
@@ -741,7 +823,6 @@ public class VentanaCrearPac extends javax.swing.JDialog
     private javax.swing.JComboBox<String> JCDependencia;
     private javax.swing.JComboBox<String> JCEspecialidad;
     private javax.swing.JComboBox<String> JCHospital1;
-    private javax.swing.JComboBox<String> JCNivel1;
     private javax.swing.JPanel bg;
     private javax.swing.JPanel bgAbj;
     private javax.swing.JPanel bgArb;
